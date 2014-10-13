@@ -1,6 +1,6 @@
 {
   "name": "x-file",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Constructor for virtual file objects",
   "main": "index.js",
   "scripts": {
