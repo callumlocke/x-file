@@ -1,5 +1,8 @@
 # x-file
 
+[![NPM version](https://badge.fury.io/js/x-file.png)](https://npmjs.org/package/x-file)
+[![Build status](https://travis-ci.org/callumlocke/x-file.svg)](https://travis-ci.org/callumlocke/x-file)
+
 This is a constructor for virtual file objects.
 
 It constructs an object with `.path` and `.contents` properties. But it also has a dynamic `.string` property for the common case of modifying the contents as a UTF-8 string over and over.
