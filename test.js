@@ -4,85 +4,100 @@ var File = require('./index');
 var expect = require('chai').expect;
 
 describe('File', function () {
+  describe('constructor:', function () {
+    it('can be constructed with an object containing `contents`');
+    it('can be constructed with options containing `text`');
 
-  describe('.contents and .string', function () {
-    it('setting .contents is reflected in .string', function () {
+    it('can be constructed with another File object');
+    it('can be constructed with no path');
+
+    it('errors if constructed with a non-string path');
+    it('errors if constructed with something weird in `contents`');
+  });
+
+  describe('.contents and .text:', function () {
+    it('setting .contents is reflected in .text', function () {
       var file = new File(null, 'hello');
-      expect(file._newer).to.equal('string');
+      expect(file._newer).to.equal('text');
 
       file.contents = new Buffer('goodbye');
       expect(file._newer).to.equal('buffer');
 
-      expect(file.string).to.equal('goodbye');
+      expect(file.text).to.equal('goodbye');
       
       expect(file._newer).to.be.a('null');
     });
 
-    it('setting .string is reflected in .contents', function () {
+    it('setting .text is reflected in .contents', function () {
       var file = new File(null, new Buffer('hello'));
       expect(file._newer).to.equal('buffer');
 
-      expect(file.string).to.equal('hello');
+      expect(file.text).to.equal('hello');
       expect(file._newer).to.be.a('null');
 
-      file.string += '...';
-      expect(file._newer).to.equal('string');
+      file.text += '...';
+      expect(file._newer).to.equal('text');
 
       expect(file.contents.toString()).to.equal('hello...');
     });
 
-    it('.contents and .string can be null', function () {
+    it('.contents and .text can be null', function () {
       // null implies the file's contents haven't been decided yet, as
       // opposed to "" which explicitly means a zero-length file
 
       var file = new File(null, null);
       expect(file._newer).to.be.a('null');
 
-      file.string = 'hey';
-      expect(file._newer).to.equal('string');
+      file.text = 'hey';
+      expect(file._newer).to.equal('text');
       expect(file.contents.toString()).to.equal('hey');
       expect(file._newer).to.be.a('null');
 
-      file.string = null;
+      file.text = null;
       expect(file.contents).to.be.a('null');
 
-      file.string = 'hey';
+      file.text = 'hey';
       expect(file.contents).to.have.length(3);
       file.contents = null;
 
-      expect(file.string).to.be.a('null');
+      expect(file.text).to.be.a('null');
     });
 
 
-    it('.contents and .string can be empty buffer/string', function () {
+    it('both .contents and .text can be empty buffer/string', function () {
       var file = new File(null, '');
+
+      expect(Buffer.isBuffer(file.contents)).to.equal(true);
+      expect(file.contents.length).to.equal(0);
+
+      file = new File(null, new Buffer(''));
 
       expect(Buffer.isBuffer(file.contents)).to.equal(true);
       expect(file.contents.length).to.equal(0);
     });
 
-    it('.contents and .string can be false', function () {
+    it('both .contents and .text can be false', function () {
       // this is intended to indicate that the file is 'to be deleted'.
 
       var file = new File(null, false);
       expect(file.contents === false).to.equal(true);
-      expect(file.string === false).to.equal(true);
+      expect(file.text === false).to.equal(true);
 
-      file.string = 'hey';
+      file.text = 'hey';
       expect(file.contents.toString()).to.equal('hey');
-      file.string = false;
+      file.text = false;
       expect(file.contents === false).to.equal(true);
 
       file.contents = new Buffer('ho');
-      expect(file.string).to.equal('ho');
+      expect(file.text).to.equal('ho');
       file.contents = false;
       expect(file._newer).to.equal('buffer');
-      expect(file.string).to.equal(false);
+      expect(file.text).to.equal(false);
     });
   });
 
 
-  describe('.path and .ext', function () {
+  describe('.path and .ext:', function () {
     it('can change the path\'s extension', function () {
       var file = new File('some/thing.scss');
       expect(file.path).to.equal('some/thing.scss');
@@ -108,15 +123,15 @@ describe('File', function () {
   });
 
 
-  describe('workaround for editing buffer in place', function () {
-    it('can force-sync the string by setting the buffer to itself', function () {
+  describe('workaround for editing buffer in place:', function () {
+    it('can force-sync .text by setting .contents to itself', function () {
       var file = new File(null, 'foo');
       
       file.contents.write('b');
-      expect(file.string).to.equal('foo');
+      expect(file.text).to.equal('foo');
 
-      file.contents = file.contents;
-      expect(file.string).to.equal('boo');
+      file.contents = file.contents; // the recommended hack
+      expect(file.text).to.equal('boo');
     });
   });
 });
