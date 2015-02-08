@@ -1,8 +1,7 @@
 'use strict';
 
-
-function File(path, contents) {
-  // allow constructing with an object (perhaps another File instance)
+function XFile(path, contents) {
+  // allow constructing with an object (perhaps another XFile instance)
   if (path && typeof path === 'object') {
     var options = path;
     // console.log(path);
@@ -42,7 +41,7 @@ function File(path, contents) {
 }
 
 
-File.prototype.inspect = function () {
+XFile.prototype.inspect = function () {
   var info = [
     'path: ' + JSON.stringify(this.path),
     'length: ' + this.length,
@@ -50,11 +49,22 @@ File.prototype.inspect = function () {
     'text: ' + (typeof this.text === 'string' ? JSON.stringify(this.text.substring(0,50)) : this.text)
   ];
 
-  return '<File ' + info.join(', ') + '>';
+  return '<XFile ' + info.join(', ') + '>';
 };
 
 
-Object.defineProperty(File.prototype, 'length', {
+Object.defineProperty(XFile.prototype, 'isXFile', {
+  get: function () {
+    return true;
+  },
+
+  set: function () {
+    throw new Error('Cannot set .isXFile property');
+  }
+});
+
+
+Object.defineProperty(XFile.prototype, 'length', {
   get: function () {
     if (Buffer.isBuffer(this.contents))
       return this.contents.length;
@@ -62,12 +72,12 @@ Object.defineProperty(File.prototype, 'length', {
   },
 
   set: function () {
-    throw new Error('You cannot set the .length property directly.');
+    throw new Error('Cannot set .length property');
   }
 });
 
 
-Object.defineProperty(File.prototype, 'contents', {
+Object.defineProperty(XFile.prototype, 'contents', {
   get: function () {
     if (this._newer === 'text') {
       if (this._text == null) this._buffer = null;
@@ -91,7 +101,7 @@ Object.defineProperty(File.prototype, 'contents', {
 });
 
 
-Object.defineProperty(File.prototype, 'text', {
+Object.defineProperty(XFile.prototype, 'text', {
   get: function () {
     if (this._newer === 'buffer') {
       if (this._buffer == null) this._text = null;
@@ -114,7 +124,7 @@ Object.defineProperty(File.prototype, 'text', {
 });
 
 
-Object.defineProperty(File.prototype, 'ext', {
+Object.defineProperty(XFile.prototype, 'ext', {
   get: function () {
     return this.path.substr((~-this.path.lastIndexOf(".") >>> 0) + 1);
   },
@@ -143,8 +153,8 @@ Object.defineProperty(File.prototype, 'ext', {
     throw new Error('Invalid property name: "' + name + '"');
   };
 
-  Object.defineProperty(File.prototype, name, {get: fn, set: fn});
+  Object.defineProperty(XFile.prototype, name, {get: fn, set: fn});
 });
 
 
-module.exports = File;
+module.exports = XFile;
