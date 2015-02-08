@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/callumlocke/x-file",
   "devDependencies": {
-    "chai": "~1.9.2",
-    "mocha": "~1.21.5"
+    "chai": "~1.10.0",
+    "mocha": "~2.1.0"
   }
 }
